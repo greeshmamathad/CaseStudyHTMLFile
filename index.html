@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="en">
+<title>Project 6361</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-black.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<style>
+html,body,h1,h2,h3,h4,h5,h6 {font-family: "Roboto", sans-serif;}
+.w3-sidebar {
+  z-index: 3;
+  width: 250px;
+  top: 43px;
+  bottom: 0;
+  height: inherit;
+}
+</style>
+<body>
+
+<!-- Navbar -->
+<div class="w3-top">
+  <div class="w3-bar w3-theme w3-top w3-left-align w3-large">
+    <a class="w3-bar-item w3-button w3-right w3-hide-large w3-hover-white w3-large w3-theme-l1" href="javascript:void(0)" onclick="w3_open()"><i class="fa fa-bars"></i></a>
+    
+    <a href="index.html" class="w3-bar-item w3-button w3-hide-small w3-hover-white">Case Studies</a>
+   
+  </div>
+</div>
+
+<!-- Sidebar -->
+<nav class="w3-sidebar w3-bar-block w3-collapse w3-large w3-theme-l5 w3-animate-left" id="mySidebar">
+  <a href="javascript:void(0)" onclick="w3_close()" class="w3-right w3-xlarge w3-padding-large w3-hover-black w3-hide-large" title="Close Menu">
+    <i class="fa fa-remove"></i>
+  </a>
+  
+</nav>
+
+<!-- Overlay effect when opening sidebar on small screens -->
+<div class="w3-overlay w3-hide-large" onclick="w3_close()" style="cursor:pointer" title="close side menu" id="myOverlay"></div>
+
+<!-- Main content: shift it to the right by 250 pixels when the sidebar is visible -->
+<div class="w3-main" style="margin-left:250px">
+
+  <div class="w3-row w3-padding-64">
+    <div class="w3-twothird w3-container">
+      <h1 class="w3-text-teal">Case Study1</h1>
+      <p style = "background-color:lightgray">
+        loans <- read_csv(file = 'loans_full_schema.csv')
+    </p>
+    <!---
+     <img src="out1.png" alt="Load File" width="800" height="200">
+    -->
+    <p>
+        Each row of the dataset represents an individual who recieved a loan from another person via the 
+        Lending Club. The data spans 3 months (January, February, March) of 2018, and contains important 
+        statistics regarding the individuals credit when paying back this loan. 
+        I don’t see any issues with the data other than the possibility that biases 
+        could be present in the predictive model of interest rate. 
+    </p>
+   
+
+    <p style = "color:cadetblue">
+        ## application type vs the mean Interest rate 
+    </p>
+    <p style = "background-color:lightgray">
+
+        loans %>% 
+        group_by(application_type) %>%  <br>
+        mutate(mean_ir = mean(interest_rate)) %>%  <br>
+        ggplot(aes(x= application_type, y= mean_ir)) + <br>
+        geom_point()+ <br>
+        geom_text(aes(label=application_type), vjust= 1.5, size= 2)+ <br>
+        labs(y= "Mean Interest Rate")+<br>
+        theme(axis.ticks.x = element_blank(), <br>
+                axis.text.x = element_blank()) <br>
+    </p>
+    <img src="out25.png" alt="Load File" width="600" height="500">
+
+    <p style = "color:cadetblue">
+        ## Mean interest rate for each state
+    </p>
+    <p style = "background-color:lightgray">
+
+        loans %>% <br>
+        group_by(state) %>% <br>
+        mutate(mean_ir = mean(interest_rate)) %>%  <br>
+        ggplot(aes(x= state, y= mean_ir)) + <br>
+        geom_point()+<br>
+        geom_text(aes(label=state), vjust= 1.5, size= 2)+<br>
+        labs(y= "Mean Interest Rate")+ <br>
+        theme(axis.ticks.x = element_blank(), <br>
+        axis.text.x = element_blank())
+    </p>
+    <img src="out24.png" alt="Load File" width="600" height="500">
+
+    <p>
+        You can see from this graph that the states Hawaii, North Dakota, 
+        and Connecticut are the states with the highest average interest rates. 
+         
+        But,there does not seem to be a clear trend between the geography of the state 
+        and interest rate.
+    </p>
+
+    <p style = "background-color:lightgray">
+        loans %>% <br>
+        group_by(emp_length) %>% <br>
+        mutate(mean_ir = mean(interest_rate)) %>%  <br>
+        ggplot(aes(x=emp_length, y=mean_ir))+ <br>
+        geom_point()+ <br>
+        geom_line()+ <br>
+        labs(x="Length in Job", y= "Mean Interest Rate")+ <br>
+        scale_x_continuous(breaks = (0:10)) <br>
+
+    </p>
+    <img src="out2.png" alt="Load File" width="600" height="400">
+
+    <p>
+        People who are newer to their 
+        job have higher average interest rates. This should be expected. 
+        However, people who have been at their jobs for 6 years and 8 years had unexpected high rates. 
+        This is most likely due to reasons not associated with time spent at their job, 
+        so we can assume that time on the job should be included in our model to predict interest rate.
+    </p>
+
+    <p style = "background-color:lightgray">
+        loans %>% <br>
+        group_by(homeownership) %>% <br>
+        ggplot(aes(x=homeownership, y=interest_rate))+ <br>
+        geom_boxplot()+ <br>
+        labs(y="Interest Rate") <br>
+    </p>
+    <img src="out3.png" alt="Load File" width="600" height="400">
+
+    <p>
+        We see that average interest rate is highest 
+        for those who owned their homes. This is a bit of a shock because if they own the home, 
+        they will not need to pay a mortgage or rent, thus they should be more reliable in getting 
+        their loan payments payed on time.
+    </p>
+
+    <p style = "background-color:lightgray">
+
+        sub_grade_lm <- lm(interest_rate ~ sub_grade, loans) <br>
+        loans %>% <br>
+        #group_by(grade) %>%<br>
+        ggplot(aes(x=sub_grade, y=interest_rate)) + <br>
+        geom_point()+ <br>
+        geom_abline(slope = coef(sub_grade_lm)[[2]], intercept = coef(sub_grade_lm)[[1]])+ <br>
+        labs(x="Sub Grade", y="Interest Rate") <br>
+
+    </p>
+    <img src="out4.png" alt="Load File" width="600" height="400">
+
+    <p>
+        This graph looks at the different interest rates for each Sub Grades. 
+        I also created a linear regression to show the line of best fit for all the points on the graph. 
+        There is a strong positive trend between interest rate and sub grade. 
+        Thus Sub Grade should be a very important feature in our predictive model of interest rate.
+    </p>
+
+    <p style = "background-color:lightgray">
+
+        loans %>%  <br>
+        ggplot(aes(y=interest_rate, x=account_never_delinq_percent ))+  <br>
+        geom_point()+  <br>
+        labs(y="Interest Rate", x="Percent of non-delinquency")  <br>
+    </p>
+    <img src="out5.png" alt="Load File" width="600" height="400">
+    <p>
+        Noticing from this graph is yes, individuals who had a higher percent 
+        of credit lines where they were never delinquent had lower interest rates.
+    </p>
+
+    <p style = "background-color:lightgray">
+        loans2 <- loans %>%  <br>
+        filter(application_type == "individual") %>% <br>
+        select(-application_type, -annual_income_joint, -verification_income_joint, -debt_to_income_joint)  <br>
+        <br>
+        <br>
+        loans2 <br>
+
+    </p>
+    <img src="out6.png" alt="Load File" width="800" height="400">
+
+    <p style = "background-color:lightgray">
+        <br>
+        loans2 %>%  <br>
+        add_n_miss() %>%  <br> 
+        count(n_miss_all) <br>
+
+    </p>
+    <img src="out7.png" alt="Load File" width="500" height="200">
+    
+    
+    <p style = "color:cadetblue">
+        #for reproducibility<br>
+    </p>
+
+    <p style = "background-color:lightgray" > 
+        
+        set.seed(327)
+        <br>
+    </p>
+
+    <p style = "color:cadetblue">
+        # Randomly assigns 75% of the data to training.<br>
+    </p>
+    <p style = "background-color:lightgray">
+        loans_split <- initial_split(loans2, 
+                                   prop = .75)<br>
+        loans_split<br>
+    </p>
+    <img src="out8.png" alt="Load File" width="500" height="60">
+
+   
+        <p style = "color:cadetblue">
+            #training/testing/total <br>
+        </p>
+    <p style = "background-color:lightgray">   
+
+loans_training <- training(loans_split)<br>
+loans_testing <- testing(loans_split)<br>
+    </p>
+
+    <p style = "color:cadetblue">
+        ----------------------------------------------------------------------------------------------------------------------------<br>
+    </p>
+
+    <p style = "background-color:lightgray">
+        loans_recipe <- recipe(interest_rate ~ ., 
+                       data = loans_training) %>%   <br>
+    </p>
+    <p style = "color:cadetblue">
+        # Pre-processing:
+    </p>
+
+    <p style = "background-color:lightgray">
+        step_rm(emp_title, state, num_accounts_120d_past_due) %>% <br>
+        step_mutate_at(all_numeric(), fn= ~replace(., is.na(.), 0)) %>% <br>
+    </p>
+
+    <p style = "color:cadetblue">
+        #step_mutate_at(all_nominal(), fn= ~replace(., is.na(.), "Null")) %>% <br>
+        # Make these evaluative variables, not included in modeling
+    </p>  
+    <p style = "background-color:lightgray">
+        update_role(all_of(c("emp_title",
+        "state",
+        "issue_month")),
+                new_role = "evaluative") %>% <br>
+    </p>  
+
+    <p style = "color:cadetblue">
+        # Create indicator variables for factors/character/nominal <br>
+        # explicitly remove outcome, even though outcome isn't nominal<br>
+        # this is important in cases when we have a nominal output (eg. logistic)<br>
+    </p> 
+    <p style = "background-color:lightgray">
+        step_dummy(all_nominal(), 
+        -all_outcomes(), 
+        -has_role(match = "evaluative")) %>% <br>
+        step_normalize(all_predictors(), 
+            -all_nominal()) <br>
+
+    </p>
+    <p style = "color:cadetblue">
+        ----------------------------------------------------------------------------------------------------------------------------<br>
+    </p>
+
+    <p style = "background-color:lightgray">
+        loans_recipe %>% <br>
+        prep(loans_training) %>% <br>
+        juice() 
+    </p>
+    <img src="out9.png" alt="Load File" width="700" height="400">
+  
+    <p style = "color:cadetblue">
+        ----------------------------------------------------------------------------------------------------------------------------<br>
+    </p>
+    
+    <p style = "color:cadetblue">
+        # for reproducibility
+       
+    </p>
+    <p style = "background-color:lightgray">
+
+        set.seed(1211) <br>
+        loans_cv <- vfold_cv(loans_training, v = 5) <br>
+    </p>
+
+
+    <p style = "color:cadetblue">
+        #Lasso Model Regression<br>
+        # Define a lasso model <br>
+        # Set the engine to "glmnet" <br>
+        # The parameters we will tune.<br>
+        # Use "regression"
+    </p>
+    
+    <p style = "background-color:lightgray">
+        loans_lasso_mod <-  linear_reg(mixture = 1) %>%  <br>
+        set_engine("glmnet") %>%  <br>
+        set_args(penalty = tune()) %>% <br>
+        set_mode("regression") <br>
+    </p>
+
+    <p style = "color:cadetblue">
+        # Set up the workflow<br>
+        # Add the recipe<br>
+        # Add the modeling<br>
+    </p>
+
+    <p style = "background-color:lightgray">
+        loans_lasso_wf <-  workflow() %>%  <br>
+        add_recipe(loans_recipe) %>% <br>
+        add_model(loans_lasso_mod)<br> <br>
+
+        loans_lasso_wf <br>
+    </p>
+
+    <img src="out10.png" alt="Load File" width="700" height="500">
+
+    <p  style = "background-color:lightgray">
+        penalty_grid <- grid_regular(penalty(),
+                             levels = 20) <br> <br>
+        penalty_grid 
+
+    </p>
+    <img src="out11.png" alt="Load File" width="700" height="500">
+
+    <p style = "background-color:lightgray">
+        loans_lasso_tune <-  loans_lasso_wf %>% <br>
+        tune_grid(resamples = loans_cv, grid = penalty_grid) <br>
+        loans_lasso_tune
+    </p>
+
+    <img src="out12.png" alt="Load File" width="700" height="300">
+
+    <p style = "color:cadetblue">
+        # The rmse for each fold:
+    </p>
+    <p style = "background-color:lightgray">
+       
+        loans_lasso_tune %>% <br>
+        select(id, .metrics) %>% <br>
+        unnest(.metrics) %>% <br>
+        filter(.metric == "rmse") <br>
+    </p>
+
+    <img src="out13.png" alt="Load File" width="700" height="290">
+
+    <p style = "color:cadetblue">
+        # rmse averaged over all folds:
+    </p>
+    <p style = "background-color:lightgray">
+        loans_lasso_tune %>%  <br>
+        collect_metrics() %>% <br>
+        filter(.metric == "rmse") <br>
+    </p>
+
+    <img src="out14.png" alt="Load File" width="700" height="400"> 
+
+    <p style = "color:cadetblue">
+        # Visualize rmse vs. penalty
+    </p>
+    <p style = "background-color:lightgray">
+        loans_lasso_tune %>% <br>
+        collect_metrics() %>% <br>
+        filter(.metric == "rmse") %>% <br> 
+        ggplot(aes(x = penalty, y = mean)) +
+        geom_point() +<br>
+        geom_line() +<br>
+        scale_x_log10(<br>
+        &emsp; breaks = scales::trans_breaks("log10", function(x) 10^x), <br>
+        &emsp; labels = scales::trans_format("log10",scales::math_format(10^.x))) + <br>
+        &emsp;  labs(x = "penalty", y = "rmse") <br>
+    </p>
+
+    <img src="out15.png" alt="Load File" width="500" height="500"> 
+
+    <p style = "background-color:lightgray" >
+        loans_lasso_tune %>%  <br>
+        show_best(metric = "rmse")
+    </p>
+    <img src="out16.png" alt="Load File" width="800" height="250">
+    
+    <p style = "color:cadetblue">
+        # Best tuning parameter by smallest rmse
+    </p> 
+    <p style = "background-color:lightgray">
+        
+            best_param <- loans_lasso_tune %>% 
+            select_best(metric = "rmse")
+            best_param
+    </p>
+
+    <img src="out17.png" alt="Load File" width="500" height="80">  
+
+    <p style = "color:cadetblue">
+        # # Best tuning parameter by smallest rmse
+    </p>
+    <p style = "background-color:lightgray">
+        
+        one_se_param <- loans_lasso_tune %>%  <br>
+        select_by_one_std_err(metric = "rmse", desc(penalty)) <br>
+        one_se_param 
+    </p>
+
+<img src="out18.png" alt="Load File" width="600" height="100">  
+
+
+<p style = "background-color:lightgray">
+        
+    loans_lasso_final_wf <- loans_lasso_wf %>%  <br>
+     finalize_workflow(one_se_param) <br>
+    loans_lasso_final_wf <br>
+</p>
+
+<img src="out19.png" alt="Load File" width="700" height="400">  
+
+
+
+<p style = "background-color:lightgray">
+        
+    loans_lasso_final_mod <- loans_lasso_final_wf %>% <br>
+    fit(data = loans_training)<br>
+  
+    loans_lasso_final_mod %>% <br>
+    pull_workflow_fit() %>% <br>
+    tidy() 
+</p>
+
+<img src="out20.png" alt="Load File" width="700" height="400"> 
+
+<p style = "color:cadetblue">
+    # Visualize variable importance 
+</p>
+<p style = "background-color:lightgray">
+    
+    loans_lasso_final_mod %>% <br>
+    pull_workflow_fit() %>% <br>
+    vip()
+</p>
+
+<img src="out21.png" alt="Load File" width="600" height="600">  
+
+<p style = "color:cadetblue">
+    # Fit model with best tuning parameter(s) to training data and apply to test data<br>
+    # Metrics for model applied to test data 
+</p>
+<p style = "background-color:lightgray">
+        loans_lasso_test <- loans_lasso_final_wf %>%  <br>
+        last_fit(loans_split)<br>
+        loans_lasso_test %>% <br>
+        collect_metrics()
+    
+</p>
+
+<img src="out22.png" alt="Load File" width="600" height="150">
+
+<p style = "background-color:lightgray">
+    collect_predictions(loans_lasso_test) %>% <br>
+    ggplot(aes(x = interest_rate, <br>
+    &emsp;&emsp;&emsp;           y = .pred)) +<br>
+    geom_point(alpha = .5, <br>
+    &emsp;&emsp;&emsp;            size = .5) +<br>
+    geom_smooth(se = FALSE) +<br>
+    geom_abline(slope = 1, <br>
+    &emsp;&emsp;&emsp;            intercept = 0, <br>
+    &emsp;&emsp;&emsp;            color = "darkred") +<br>
+    labs(x = "Actual Interest Rate", <br>
+    &emsp;    y = "Predicted Interest Rate")<br>
+
+</p>
+
+<img src="out23.png" alt="Load File" width="600" height="600">
+
+
+
+<h1 class="w3-text-teal">Case Study2</h1>
+
+
+<p style = "background-color:lightgray">
+    data <- read_csv(file = 'casestudy.csv') <br>
+
+    summary(data)<br>
+
+    glimpse(data)<br>
+
+
+    summary(is.na(data))
+
+</p>
+
+<img src="out26.png" alt="Load File" width="600" height="400">
+
+<p style = "color:cadetblue">
+    # # Total revenue for the current year
+</p>
+<p style = "background-color:lightgray">
+    
+    data %>% <br>
+    group_by(year) %>% <br>
+    summarise(Revenue =sum(net_revenue)) <br>
+</p>
+
+<img src="out27.png" alt="Load File" width="600" height="100">
+
+
+
+<p style = "color:cadetblue">
+    # New Customer Revenue e.g. new customers not present in previous year only
+</p>
+<p style = "background-color:lightgray">
+    
+    cust_2017 <- data %>%  <br>
+    &emsp; filter( year == 2017) <br>
+
+    cust_2016 <- data %>% <br>
+    &emsp; filter( year == 2016)<br>
+
+    cust_2015 <- data %>%  <br>
+    &emsp;  filter( year == 2015) <br>
+
+
+    new_cust_2017 <- anti_join(cust_2017, cust_2016, by = c("customer_email" = "customer_email"))<br>
+    new_cust_2016 <- anti_join(cust_2016, cust_2015, by = c("customer_email" = "customer_email"))<br>
+
+    new_cust_2017 %>% <br>
+    &emsp; summarise(Revenue_new_cust_2017 = sum(net_revenue)) <br>
+
+    new_cust_2016 %>% <br>
+    &emsp; summarise(Revenue_new_cust_2016 = sum(net_revenue)) <br>
+</p>
+
+<img src="out28.png" alt="Load File" width="600" height="200">
+
+
+<p style = "color:cadetblue">
+    #Existing Customer Growth. <br>
+    #To calculate this, use the Revenue of existing customers for current year –(minus) 
+    Revenue of existing customers from the previous year
+</p>
+<p style = "background-color:lightgray">
+    
+    result = data %>% <br>
+    &emsp; group_by(customer_email) <br>
+    <br>
+    head(result) 
+</p>
+
+<img src="out29.png" alt="Load File" width="700" height="200">
+
+<p style = "color:cadetblue">
+    # Existing Customer Revenue Current Year
+</p>
+<p style = "background-color:lightgray">
+    cust_2017 <- data %>% <br>
+    &emsp; filter( year == 2017) <br>
+
+
+    cust_2017 %>% <br>
+    &emsp; summarise(Revenue_existing_cust_2017 = sum(net_revenue)) 
+    
+</p>
+
+<img src="out30.png" alt="Load File" width="700" height="100">
+
+<p style = "color:cadetblue">
+    # Existing Customer Revenue Prior Year
+</p>
+<p style = "background-color:lightgray">
+    cust_2016 <- data %>% <br>
+    &emsp; filter( year == 2016) <br>
+
+
+    cust_2016 %>% <br>
+    &emsp; summarise(Revenue_existing_cust_2016 = sum(net_revenue)) 
+    
+</p>
+
+<img src="out31.png" alt="Load File" width="700" height="100">
+
+
+<p style = "color:cadetblue">
+    # Total Customers Current Year
+</p>
+<p style = "background-color:lightgray">
+    cust_2017 <- data %>% <br>
+    &emsp; filter( year == 2017) <br>
+
+    cust_2017 
+    
+</p>
+
+<img src="out32.png" alt="Load File" width="600" height="300">
+
+<p style = "color:cadetblue">
+    # Total Customers Prior Year
+</p>
+<p style = "background-color:lightgray">
+    cust_2016 <- data %>% <br>
+    &emsp; filter( year == 2016) <br>
+
+    cust_2016 
+    
+</p>
+
+<img src="out33.png" alt="Load File" width="600" height="300">
+
+<p style = "color:cadetblue">
+    # New Customers
+</p>
+<p style = "background-color:lightgray">
+    new_cust_2017 <- anti_join(cust_2017, cust_2016, by = c("customer_email" = "customer_email"))<br><br>
+
+    new_cust_2017
+    
+</p>
+
+<img src="out34.png" alt="Load File" width="600" height="300">
+
+
+
+<p style = "color:cadetblue">
+    # Lost Customers
+</p>
+<p style = "background-color:lightgray">
+    lost_cust <- anti_join(cust_2015, cust_2017, cust_2016, by = c("customer_email" = "customer_email")) <br><br>
+
+    lost_cust
+    
+</p>
+
+<img src="out35.png" alt="Load File" width="500" height="300">
+
+
+<p style = "color:cadetblue">
+    # Plot1: Revenue vs Year
+</p>
+<p style = "background-color:lightgray">
+    data %>% <br>
+    group_by(year) %>%  <br>
+    ggplot(aes(x=year, y=net_revenue))+  <br>
+    &emsp; geom_boxplot()+  <br>
+    &emsp;&emsp;labs(y="net_revenue")  <br>
+
+    
+</p>
+
+<img src="out36.png" alt="Load File" width="500" height="400">
+
+<p style = "color:cadetblue">
+    # Plot2: Revenue for year 2017
+</p>
+<p style = "background-color:lightgray">
+    data %>% <br>
+    group_by(year = 2017) %>%  <br>
+    ggplot(aes(x=year, y=net_revenue))+  <br>
+    &emsp; geom_boxplot()+  <br>
+    &emsp;&emsp;labs(y="net_revenue")  <br>
+
+    
+</p>
+
+<img src="out37.png" alt="Load File" width="500" height="400">
+
+
+    </div>
+    
+
+    
+  </div>
+
+  
+ 
+  
+
+ 
+  <footer id="myFooter">
+    <div class="w3-container w3-theme-l2 w3-padding-32">
+      <h4>Thank You</h4>
+      <p>   Greeshma Mathad</p>
+    </div>
+
+    
+  </footer>
+
+<!-- END MAIN -->
+</div>
+
+<script>
+// Get the Sidebar
+var mySidebar = document.getElementById("mySidebar");
+
+// Get the DIV with overlay effect
+var overlayBg = document.getElementById("myOverlay");
+
+// Toggle between showing and hiding the sidebar, and add overlay effect
+function w3_open() {
+  if (mySidebar.style.display === 'block') {
+    mySidebar.style.display = 'none';
+    overlayBg.style.display = "none";
+  } else {
+    mySidebar.style.display = 'block';
+    overlayBg.style.display = "block";
+  }
+}
+
+// Close the sidebar with the close button
+function w3_close() {
+  mySidebar.style.display = "none";
+  overlayBg.style.display = "none";
+}
+</script>
+
+</body>
+</html>
